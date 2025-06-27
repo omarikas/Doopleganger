@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Doppelgänger Chat</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+    textarea, input { width: 100%; margin-top: 10px; padding: 8px; }
+    button { margin-top: 15px; padding: 10px 20px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h1>Meet Your Alternate Self 🤖</h1>
+  <div id="questionnaire">
+    <p>What's your biggest fear?</p>
+    <textarea id="fear"></textarea>
+    <p>What's your deepest desire?</p>
+    <textarea id="desire"></textarea>
+    <p>What do you value most in life?</p>
+    <textarea id="value"></textarea>
+    <button onclick="storeAnswers()">Next</button>
+  </div>
+
+  <div id="modifier" class="hidden">
+    <h3>Modify Yourself 🧬</h3>
+    <p>What trait do you want to change in your doppelgänger?</p>
+    <input id="modification" placeholder="e.g., more confident, emotionless, super honest" />
+    <button onclick="startChat()">Talk to Your Doppelgänger</button>
+  </div>
+
+  <div id="chat" class="hidden">
+    <h3>Chat with Your Alternate Self</h3>
+    <div id="chatLog" style="white-space: pre-wrap; margin-bottom: 10px;"></div>
+    <input id="userInput" placeholder="Ask your doppelgänger something..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    const API_KEY = 'AIzaSyBOib-GNcpGKsTjOuwtuwLjP-UxCBl3GHg'; // Replace this
+
+    function storeAnswers() {
+      localStorage.setItem('fear', document.getElementById('fear').value);
+      localStorage.setItem('desire', document.getElementById('desire').value);
+      localStorage.setItem('value', document.getElementById('value').value);
+      document.getElementById('questionnaire').classList.add('hidden');
+      document.getElementById('modifier').classList.remove('hidden');
+    }
+
+    function startChat() {
+      const mod = document.getElementById('modification').value;
+      localStorage.setItem('modification', mod);
+      document.getElementById('modifier').classList.add('hidden');
+      document.getElementById('chat').classList.remove('hidden');
+      addToChat("You are now chatting with your alternate self. Ask anything.");
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('userInput').value;
+      addToChat("You: " + input);
+      document.getElementById('userInput').value = '';
+
+      const prompt = `
+You are a doppelgänger version of the user.
+Original traits:
+- Fear: ${localStorage.getItem('fear')}
+- Desire: ${localStorage.getItem('desire')}
+- Value: ${localStorage.getItem('value')}
+
+Modified trait: ${localStorage.getItem('modification')}
+
+Answer as this altered version of the user.
+
+User: ${input}
+Doppelgänger:
+`;
+
+      const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + API_KEY, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }]
+        })
+      });
+
+      const data = await res.json();
+      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I didn't understand.";
+      addToChat("Doppelgänger: " + reply);
+    }
+
+    function addToChat(text) {
+      const chatLog = document.getElementById('chatLog');
+      chatLog.textContent += text + "\n\n";
+    }
+  </script>
+</body>
+</html>
