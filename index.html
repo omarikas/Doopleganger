@@ -12,7 +12,7 @@
 </head>
 <body>
   <h1>Meet Your Alternate Self 🤖</h1>
-  <div id="questionnaire">
+  <div id="questionnaire"  class="hidden">
     <p>What's your biggest fear?</p>
     <textarea id="fear"></textarea>
     <p>What's your deepest desire?</p>
@@ -22,17 +22,17 @@
     <button onclick="storeAnswers()">Next</button>
   </div>
 
-  <div id="modifier" class="hidden">
+  <div id="modifier" >
     <h3>Modify Yourself 🧬</h3>
-    <p>What trait do you want to change in your doppelgänger?</p>
+    <p>What trait do you want to change in your friend's doppelgänger?</p>
     <input id="modification" placeholder="e.g., more confident, emotionless, super honest" />
-    <button onclick="startChat()">Talk to Your Doppelgänger</button>
+    <button onclick="startChat()">Talk to Your Friend's Doppelgänger</button>
   </div>
 
   <div id="chat" class="hidden">
-    <h3>Chat with Your Alternate Self</h3>
+    <h3>Chat with Your Friend's Alternate Self</h3>
     <div id="chatLog" style="white-space: pre-wrap; margin-bottom: 10px;"></div>
-    <input id="userInput" placeholder="Ask your doppelgänger something..." />
+    <input id="userInput" placeholder="Ask your friend's doppelgänger something..." />
     <button onclick="sendMessage()">Send</button>
   </div>
 
@@ -61,15 +61,15 @@
       document.getElementById('userInput').value = '';
 
       const prompt = `
-You are a doppelgänger version of the user.
+You are a doppelgänger version of the user friend.
 Original traits:
-- Fear: ${localStorage.getItem('fear')}
-- Desire: ${localStorage.getItem('desire')}
-- Value: ${localStorage.getItem('value')}
+- Fear: dying alonely death
+- Desire: to make friends
+- Value: to be loved
 
 Modified trait: ${localStorage.getItem('modification')}
 
-Answer as this altered version of the user.
+Answer as this altered version of the user's friend.
 
 User: ${input}
 Doppelgänger:
